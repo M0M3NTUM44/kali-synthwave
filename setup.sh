@@ -416,6 +416,10 @@ QTHEME
 
 cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" "$QT6_SCHEME_DIR/" 2>/dev/null || true
 cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" "$QTERM_SCHEME_DIR/" 2>/dev/null || true
+sudo mkdir -p /usr/share/qtermwidget5/color-schemes 2>/dev/null || true
+sudo mkdir -p /usr/share/qtermwidget6/color-schemes 2>/dev/null || true
+sudo cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" /usr/share/qtermwidget5/color-schemes/ 2>/dev/null || true
+sudo cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" /usr/share/qtermwidget6/color-schemes/ 2>/dev/null || true
 
 # ── Set zsh as default ───────────────────────────────────────
 if [ "$SHELL" != "$(which zsh)" ]; then
