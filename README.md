@@ -40,10 +40,18 @@ Then restart your terminal.
 
 ## 🎨 After Install
 
-1. Open **XFCE4 Terminal** → Edit → Preferences
+### For QTerminal (Kali Default)
+1. Dropdown Menu / File → **Preferences**
+2. **Appearance** tab:
+   - **Color Scheme**: Select `Synthwave Dark`
+   - **Font**: Set to `MesloLGS NF`
+3. Restart terminal
+
+### For XFCE4 Terminal
+1. **Edit** → **Preferences**
 2. **Appearance** tab → Font → set to `MesloLGS NF 12`
 3. **Colors** tab → Presets → select `Synthwave Dark`
-4. Close and reopen terminal
+4. Restart terminal
 
 ---
 

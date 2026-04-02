@@ -105,10 +105,10 @@ cat > "$HOME/.p10k.zsh" << 'P10K'
   autoload -Uz is-at-least && is-at-least 5.1 || return
 
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
-    os_icon context dir vcs prompt_char
+    dir vcs prompt_char
   )
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
-    status command_execution_time background_jobs virtualenv ip time
+    status command_execution_time
   )
 
   typeset -g POWERLEVEL9K_MODE=nerdfont-v3
@@ -191,15 +191,15 @@ cat > "$HOME/.config/fastfetch/config.jsonc" << 'FFCONF'
     "modules": [
         { "type": "title", "format": "{user-name}@{host-name}" },
         "separator",
-        { "type": "os",       "key": " OS"        },
-        { "type": "kernel",   "key": "󰌽 Kernel"   },
-        { "type": "uptime",   "key": "󱎫 Uptime"   },
-        { "type": "shell",    "key": " Shell"    },
-        { "type": "terminal", "key": " Terminal" },
-        { "type": "cpu",      "key": "󰻠 CPU"      },
-        { "type": "memory",   "key": "󰍛 RAM"      },
-        { "type": "disk",     "key": "󰋊 Disk", "folders": "/" },
-        { "type": "localip",  "key": "󰩟 IP"       },
+        { "type": "os",       "key": " OS"       },
+        { "type": "kernel",   "key": " Kernel"   },
+        { "type": "uptime",   "key": " Uptime"   },
+        { "type": "shell",    "key": " Shell"    },
+        { "type": "terminal", "key": " Terminal" },
+        { "type": "cpu",      "key": " CPU"      },
+        { "type": "memory",   "key": " RAM"      },
+        { "type": "disk",     "key": " Disk", "folders": "/" },
+        { "type": "localip",  "key": " IP"       },
         "break",
         { "type": "colors", "paddingLeft": 2, "symbol": "circle" }
     ]
@@ -342,6 +342,74 @@ TabActivityColor=#FF00FF
 ColorPalette=#1A1A2E;#FF5555;#50FA7B;#F1FA8C;#6272A4;#FF79C6;#00FFFF;#BFBFBF;#44475A;#FF6E6E;#69FF94;#FFFFA5;#8BE9FD;#FF92DF;#A4FFFF;#E0D0FF
 THEME
 
+# ── QTerminal color scheme ───────────────────────────────────
+mkdir -p "$HOME/.config/qterminal.org/color-schemes"
+cat > "$HOME/.config/qterminal.org/color-schemes/Synthwave Dark.colorscheme" << 'QTHEME'
+[Background]
+Color=#0d0d1e
+
+[BackgroundIntense]
+Color=#1a1a2e
+
+[Color0]
+Color=#1a1a2e
+
+[Color0Intense]
+Color=#44475a
+
+[Color1]
+Color=#ff5555
+
+[Color1Intense]
+Color=#ff6e6e
+
+[Color2]
+Color=#50fa7b
+
+[Color2Intense]
+Color=#69ff94
+
+[Color3]
+Color=#f1fa8c
+
+[Color3Intense]
+Color=#ffffa5
+
+[Color4]
+Color=#6272a4
+
+[Color4Intense]
+Color=#8be9fd
+
+[Color5]
+Color=#ff79c6
+
+[Color5Intense]
+Color=#ff92df
+
+[Color6]
+Color=#00ffff
+
+[Color6Intense]
+Color=#a4ffff
+
+[Color7]
+Color=#bfbfbf
+
+[Color7Intense]
+Color=#e0d0ff
+
+[Foreground]
+Color=#e0d0ff
+
+[ForegroundIntense]
+Color=#ffffff
+
+[General]
+Description=Synthwave Dark
+Opacity=1
+QTHEME
+
 # ── Set zsh as default ───────────────────────────────────────
 if [ "$SHELL" != "$(which zsh)" ]; then
     chsh -s "$(which zsh)" 2>/dev/null || \
@@ -354,9 +422,12 @@ echo -e "${GREEN}${BOLD}  ✅ SYNTHWAVE SETUP COMPLETE${RESET}"
 echo -e "${MAGENTA}${BOLD}══════════════════════════════════════════════════${RESET}"
 echo ""
 echo -e "${CYAN}  Next steps:${RESET}"
-echo -e "  ${YELLOW}1.${RESET} Open XFCE4 Terminal → Edit → Preferences"
-echo -e "     → Appearance → Font: ${CYAN}MesloLGS NF 12${RESET}"
-echo -e "     → Colors → Presets → ${CYAN}Synthwave Dark${RESET}"
+echo -e "  ${YELLOW}1.${RESET} Set terminal preferences:"
+echo -e "     ${MAGENTA}QTerminal (Kali default):${RESET} Preferences -> Appearance"
+echo -e "     -> Color Scheme: ${CYAN}Synthwave Dark${RESET}"
+echo -e "     -> Font: ${CYAN}MesloLGS NF${RESET}"
+echo -e "     ${MAGENTA}XFCE4:${RESET} Preferences -> Appearance -> Font: ${CYAN}MesloLGS NF 12${RESET}"
+echo -e "     -> Colors -> Presets -> ${CYAN}Synthwave Dark${RESET}"
 echo ""
 echo -e "  ${YELLOW}2.${RESET} Restart terminal or run: ${CYAN}exec zsh${RESET}"
 echo ""
