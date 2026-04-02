@@ -177,7 +177,7 @@ cat > "$UHOME/.p10k.zsh" << 'P10K'
   typeset -g POWERLEVEL9K_IP_INTERFACE='eth0'
 
   typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=always
-  typeset -g POWERLEVEL9K_INSTANT_PROMPT=verbose
+  typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 } "$@"
 
 (( ${#p10k_config_opts} )) && setopt ${p10k_config_opts[@]}
@@ -235,6 +235,19 @@ cat > "$UHOME/.zshrc" << 'ZSHRC'
 # ──────────────────────────────────────────────────────────────
 #  SYNTHWAVE ZSH — M0M3NTUM44
 # ──────────────────────────────────────────────────────────────
+
+# ── Startup (before instant prompt) ─────────────────────────
+if command -v fastfetch &>/dev/null; then
+    fastfetch
+fi
+echo ""
+echo -e "\033[0;35m  ┌─────────────────────────────────────────────────────────────┐\033[0m"
+echo -e "\033[0;35m  │\033[0m                                                               \033[0;35m│\033[0m"
+echo -e "\033[0;35m  │\033[0m  \033[1;36m\"If The Rule You Followed Brought You To This...\033[0m              \033[0;35m│\033[0m"
+echo -e "\033[0;35m  │\033[0m   \033[1;35mOf What Use Was The Rule?\033[0m\033[1;36m....\033[0m\033[0;35m\"\033[0m                              \033[0;35m│\033[0m"
+echo -e "\033[0;35m  │\033[0m                                                               \033[0;35m│\033[0m"
+echo -e "\033[0;35m  └─────────────────────────────────────────────────────────────┘\033[0m"
+echo ""
 
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -334,21 +347,6 @@ alias ga='git add -A'
 alias gc='git commit -m'
 alias gp='git push'
 alias gl='git log --oneline --graph --decorate'
-
-# ── Startup ──────────────────────────────────────────────────
-if command -v fastfetch &>/dev/null; then
-    fastfetch
-fi
-
-# ── The Quote ────────────────────────────────────────────────
-echo ""
-echo -e "\033[0;35m  ┌─────────────────────────────────────────────────────────────┐\033[0m"
-echo -e "\033[0;35m  │\033[0m                                                               \033[0;35m│\033[0m"
-echo -e "\033[0;35m  │\033[0m  \033[1;36m\"If The Rule You Followed Brought You To This...\033[0m              \033[0;35m│\033[0m"
-echo -e "\033[0;35m  │\033[0m   \033[1;35mOf What Use Was The Rule?\033[0m\033[1;36m....\033[0m\033[0;35m\"\033[0m                              \033[0;35m│\033[0m"
-echo -e "\033[0;35m  │\033[0m                                                               \033[0;35m│\033[0m"
-echo -e "\033[0;35m  └─────────────────────────────────────────────────────────────┘\033[0m"
-echo ""
 
 # P10k
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
