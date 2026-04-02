@@ -59,7 +59,13 @@ for variant in "Regular" "Bold" "Italic" "Bold%20Italic"; do
     curl -sfLo "$FONT_DIR/$fname" "${BASE_URL}/MesloLGS%20NF%20${variant}.ttf" || true
 done
 fc-cache -f "$FONT_DIR" 2>/dev/null || true
-ok "MesloLGS NF installed → set it in your terminal preferences"
+
+# Copy globally for Qt/system apps
+sudo mkdir -p /usr/share/fonts/truetype/meslo
+sudo cp "$FONT_DIR"/MesloLGS*.ttf /usr/share/fonts/truetype/meslo/ 2>/dev/null || true
+sudo fc-cache -fv 2>/dev/null || true
+
+ok "MesloLGS NF installed (local & global) → set it in your terminal preferences"
 
 # ── 3. Oh-My-Zsh ─────────────────────────────────────────────
 step "3/8" "Installing Oh-My-Zsh..."
@@ -254,6 +260,10 @@ ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#F1FA8C'
 ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#F1FA8C'
 ZSH_HIGHLIGHT_STYLES[redirection]='fg=#FF79C6,bold'
 ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=#FF79C6'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#FF79C6,italic'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#FF79C6,italic'
+ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=#BD93F9'
+ZSH_HIGHLIGHT_STYLES[assign]='fg=#50FA7B'
 
 # ── History ──────────────────────────────────────────────────
 HISTSIZE=50000
