@@ -96,9 +96,25 @@ step "5/8" "Installing Powerlevel10k theme..."
     "$ZSH_CUSTOM/themes/powerlevel10k"
 ok "Powerlevel10k installed"
 
+# ── write_user_config <home> <user> ──────────────────────────
+# Writes all per-user dotfiles and terminal themes.
+# Call once for a normal user, then again (via sudo) for root.
+write_user_config() {
+  local UHOME="$1"
+  local UNAME="$2"
+  local ZSH_DIR="$UHOME/.oh-my-zsh"
+  local ZSH_CUSTOM="$ZSH_DIR/custom"
+
+  # ── Powerlevel10k theme (needs p10k install) ──────────────
+  # Clone Powerlevel10k if not already in this user's oh-my-zsh
+  [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ] && \
+    sudo -u "$UNAME" git clone -q --depth=1 \
+      https://github.com/romkatv/powerlevel10k.git \
+      "$ZSH_CUSTOM/themes/powerlevel10k" 2>/dev/null || true
+
 # ── 6. P10k config ───────────────────────────────────────────
-step "6/8" "Writing Powerlevel10k config..."
-cat > "$HOME/.p10k.zsh" << 'P10K'
+step "6/8" "Writing Powerlevel10k config for $UNAME..."
+cat > "$UHOME/.p10k.zsh" << 'P10K'
 'builtin' 'local' '-a' 'p10k_config_opts'
 [[ ! -o 'aliases'         ]] || p10k_config_opts+=('aliases')
 [[ ! -o 'sh_glob'         ]] || p10k_config_opts+=('sh_glob')
@@ -167,13 +183,13 @@ cat > "$HOME/.p10k.zsh" << 'P10K'
 (( ${#p10k_config_opts} )) && setopt ${p10k_config_opts[@]}
 'builtin' 'unset' 'p10k_config_opts'
 P10K
-ok ".p10k.zsh written"
+ok ".p10k.zsh written for $UNAME"
 
 # ── 7. Fastfetch config ──────────────────────────────────────
-step "7/8" "Configuring fastfetch banner..."
-mkdir -p "$HOME/.config/fastfetch"
+step "7/8" "Configuring fastfetch banner for $UNAME..."
+mkdir -p "$UHOME/.config/fastfetch"
 
-cat > "$HOME/.config/fastfetch/logo.txt" << 'LOGO'
+cat > "$UHOME/.config/fastfetch/logo.txt" << 'LOGO'
   ██╗  ██╗ █████╗  ██████╗██╗  ██╗
   ██║  ██║██╔══██╗██╔════╝██║ ██╔╝
   ███████║███████║██║     █████╔╝ 
@@ -182,7 +198,7 @@ cat > "$HOME/.config/fastfetch/logo.txt" << 'LOGO'
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
 LOGO
 
-cat > "$HOME/.config/fastfetch/config.jsonc" << 'FFCONF'
+cat > "$UHOME/.config/fastfetch/config.jsonc" << 'FFCONF'
 {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
     "logo": {
@@ -211,11 +227,11 @@ cat > "$HOME/.config/fastfetch/config.jsonc" << 'FFCONF'
     ]
 }
 FFCONF
-ok "Fastfetch configured"
+ok "Fastfetch configured for $UNAME"
 
 # ── 8. .zshrc ────────────────────────────────────────────────
-step "8/8" "Writing .zshrc..."
-cat > "$HOME/.zshrc" << 'ZSHRC'
+step "8/8" "Writing .zshrc for $UNAME..."
+cat > "$UHOME/.zshrc" << 'ZSHRC'
 # ──────────────────────────────────────────────────────────────
 #  SYNTHWAVE ZSH — M0M3NTUM44
 # ──────────────────────────────────────────────────────────────
@@ -337,11 +353,15 @@ echo ""
 # P10k
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 ZSHRC
-ok ".zshrc written"
+ok ".zshrc written for $UNAME"
 
-# ── XFCE4 Terminal color scheme ──────────────────────────────
-mkdir -p "$HOME/.local/share/xfce4/terminal/colorschemes"
-cat > "$HOME/.local/share/xfce4/terminal/colorschemes/Synthwave Dark.theme" << 'THEME'
+  # ── Fix ownership ─────────────────────────────────────────
+  chown -R "$UNAME:$UNAME" "$UHOME/.p10k.zsh" "$UHOME/.zshrc" \
+    "$UHOME/.config/fastfetch" 2>/dev/null || true
+
+  # ── XFCE4 Terminal color scheme ──────────────────────────
+  mkdir -p "$UHOME/.local/share/xfce4/terminal/colorschemes"
+cat > "$UHOME/.local/share/xfce4/terminal/colorschemes/Synthwave Dark.theme" << 'THEME'
 [Scheme]
 Name=Synthwave Dark
 ColorForeground=#E0D0FF
@@ -351,6 +371,35 @@ ColorBold=#FF79C6
 TabActivityColor=#FF00FF
 ColorPalette=#1A1A2E;#FF5555;#50FA7B;#F1FA8C;#6272A4;#FF79C6;#00FFFF;#BFBFBF;#44475A;#FF6E6E;#69FF94;#FFFFA5;#8BE9FD;#FF92DF;#A4FFFF;#E0D0FF
 THEME
+  chown -R "$UNAME:$UNAME" \
+    "$UHOME/.local/share/xfce4" 2>/dev/null || true
+
+} # ── end write_user_config ──────────────────────────────────
+
+# ── 6-8. Apply configs for both users ───────────────────────
+step "*" "Applying configs for user: $USER"
+write_user_config "$HOME" "$USER"
+
+# Apply to root as well (only if we're not already root)
+if [ "$USER" != "root" ]; then
+    step "*" "Applying configs for user: root"
+    # Ensure root has oh-my-zsh installed too
+    if [ ! -d /root/.oh-my-zsh ]; then
+        sudo RUNZSH=no CHSH=no sh -c \
+            "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+            -- --unattended 2>/dev/null || true
+    fi
+    # Copy plugins & theme to root's oh-my-zsh custom
+    ROOT_CUSTOM=/root/.oh-my-zsh/custom
+    for plugin in zsh-syntax-highlighting zsh-autosuggestions zsh-history-substring-search; do
+        sudo mkdir -p "$ROOT_CUSTOM/plugins/$plugin"
+        sudo rsync -a "$ZSH_CUSTOM/plugins/$plugin/" "$ROOT_CUSTOM/plugins/$plugin/" 2>/dev/null || true
+    done
+    sudo mkdir -p "$ROOT_CUSTOM/themes/powerlevel10k"
+    sudo rsync -a "$ZSH_CUSTOM/themes/powerlevel10k/" "$ROOT_CUSTOM/themes/powerlevel10k/" 2>/dev/null || true
+
+    write_user_config /root root
+fi
 
 # ── QTerminal color scheme ───────────────────────────────────
 QT5_SCHEME_DIR="$HOME/.local/share/qtermwidget5/color-schemes"
@@ -431,11 +480,14 @@ sudo mkdir -p /usr/share/qtermwidget6/color-schemes 2>/dev/null || true
 sudo cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" /usr/share/qtermwidget5/color-schemes/ 2>/dev/null || true
 sudo cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" /usr/share/qtermwidget6/color-schemes/ 2>/dev/null || true
 
-# ── Set zsh as default ───────────────────────────────────────
-if [ "$SHELL" != "$(which zsh)" ]; then
-    chsh -s "$(which zsh)" 2>/dev/null || \
-        sudo chsh -s "$(which zsh)" "$USER" 2>/dev/null || true
+# ── Set zsh as default for kali and root ────────────────────
+ZSH_PATH="$(which zsh)"
+if [ "$SHELL" != "$ZSH_PATH" ]; then
+    chsh -s "$ZSH_PATH" 2>/dev/null || \
+        sudo chsh -s "$ZSH_PATH" "$USER" 2>/dev/null || true
 fi
+sudo chsh -s "$ZSH_PATH" root 2>/dev/null || true
+ok "zsh set as default shell for $USER and root"
 
 echo ""
 echo -e "${MAGENTA}${BOLD}══════════════════════════════════════════════════${RESET}"
