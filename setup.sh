@@ -343,8 +343,12 @@ ColorPalette=#1A1A2E;#FF5555;#50FA7B;#F1FA8C;#6272A4;#FF79C6;#00FFFF;#BFBFBF;#44
 THEME
 
 # ── QTerminal color scheme ───────────────────────────────────
-mkdir -p "$HOME/.config/qterminal.org/color-schemes"
-cat > "$HOME/.config/qterminal.org/color-schemes/Synthwave Dark.colorscheme" << 'QTHEME'
+QT5_SCHEME_DIR="$HOME/.local/share/qtermwidget5/color-schemes"
+QT6_SCHEME_DIR="$HOME/.local/share/qtermwidget6/color-schemes"
+QTERM_SCHEME_DIR="$HOME/.config/qterminal.org/color-schemes"
+mkdir -p "$QT5_SCHEME_DIR" "$QT6_SCHEME_DIR" "$QTERM_SCHEME_DIR"
+
+cat > "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" << 'QTHEME'
 [Background]
 Color=#0d0d1e
 
@@ -409,6 +413,9 @@ Color=#ffffff
 Description=Synthwave Dark
 Opacity=1
 QTHEME
+
+cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" "$QT6_SCHEME_DIR/" 2>/dev/null || true
+cp "$QT5_SCHEME_DIR/Synthwave Dark.colorscheme" "$QTERM_SCHEME_DIR/" 2>/dev/null || true
 
 # ── Set zsh as default ───────────────────────────────────────
 if [ "$SHELL" != "$(which zsh)" ]; then
